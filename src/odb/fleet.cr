@@ -136,10 +136,9 @@ class FleetGroup
       unitType = ship[2]
       running = true
 
-      # puts dm
-
       while running
-        enemyPos = Random.rand(enemy_count)
+        enemyPos = rn.rand(enemy_count)
+        # puts enemyPos
         enemyShip = enemyShips[enemyPos]
         tDm += dm
 
@@ -153,8 +152,9 @@ class FleetGroup
 
               if de < enemyShip[0]
                 remaining = enemyShip[0] - de
-                xp = (enemyShipType.@baseHull - remaining) / remaining
-                if xp > 0.3 && rn.next_float < xp
+
+                xp = remaining / enemyShipType.@baseHull
+                if xp < 0.7 && rn.next_float < (1.0 - xp)
                   # boom!
                   enemyShipType.explosions = enemyShipType.@explosions + 1 # .....
                   enemyShips[enemyPos] = {0.0, 0.0, enemyShipType}
@@ -170,6 +170,8 @@ class FleetGroup
               tDf += dm
               enemyShips[enemyPos] = {enemyShip[0], enemyShip[1] - dm, enemyShipType}
             end
+
+            # puts enemyShips[enemyPos][0].to_s + " - " + enemyShips[enemyPos][1].to_s
           else
             tDf += dm
             running = false
