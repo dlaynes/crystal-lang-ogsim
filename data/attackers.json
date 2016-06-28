@@ -3,7 +3,7 @@
         "id" : 1,
         "name": "Attacker 1",
         "mainPlanet": {"galaxy":1,"system":1,"position":1,"planetType":1},
-        "originalFleet":{"204": 15000},
+        "originalFleet":{"204": 1500000},
         "militaryTech":10,
         "defenseTech":10,
         "hullTech":10
