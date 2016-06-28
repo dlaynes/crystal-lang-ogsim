@@ -3,7 +3,7 @@
         "id" : 1001,
         "name": "Defender 1",
         "mainPlanet": {"galaxy":1,"system":1,"position":2,"planetType":1},
-        "originalFleet":{"206": 2000},
+        "originalFleet":{"206": 200000},
         "militaryTech":10,
         "defenseTech":10,
         "hullTech":10

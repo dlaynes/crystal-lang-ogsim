@@ -111,8 +111,8 @@ class FleetGroup
     puts "Length after cleanup " + @ships.size.to_s
   end
 
-  def setShips(ships)
-    @ships = ships
+  # not needed, since the array is passed by reference
+  def ships=(@ships)
   end
 
   def attack(group : FleetGroup)
@@ -187,8 +187,7 @@ class FleetGroup
         end
       end
     end
-
-    group.setShips(enemyShips)
+    # group.ships = enemyShips
     @turnAttacks = tA
     @turnDefense = tDf
     @turnDamage = tDm
