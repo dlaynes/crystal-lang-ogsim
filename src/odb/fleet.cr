@@ -107,6 +107,7 @@ class FleetGroup
         newShips << {ship[0], ship[2].@baseShield, ship[2]}
       end
     end
+
     @ships = newShips
     puts "Length after cleanup " + @ships.size.to_s
   end
@@ -116,7 +117,6 @@ class FleetGroup
   end
 
   def attack(group : FleetGroup)
-    Random.new_seed
     enemy_count = group.@ships.size
     tA = @ships.size
     tDm = 0.0
@@ -125,12 +125,6 @@ class FleetGroup
 
     rn = Random.new
 
-    # puts "attacking"
-    # puts @ships
-
-    # puts "defending"
-    # puts enemyShips
-
     @ships.each do |ship|
       dm = ship[2].@baseAttack
       unitType = ship[2]
@@ -138,32 +132,21 @@ class FleetGroup
 
       while running
         enemyPos = rn.rand(enemy_count)
-        # puts enemyPos
         enemyShip = enemyShips[enemyPos]
         tDm += dm
 
         enemyShipType = enemyShip[2]
 
         if enemyShip[0] != 0.0
-          if dm * 100 > enemyShipType.@baseShield
+          if dm * 100 >= enemyShipType.@baseShield
             if dm > enemyShip[1]
               de = dm - enemyShip[1]
               tDf += enemyShip[1]
 
               if de < enemyShip[0]
                 remaining = enemyShip[0] - de
-
-                xp = remaining / enemyShipType.@baseHull
-                if xp < 0.7 && rn.next_float < (1.0 - xp)
-                  # boom!
-                  enemyShipType.explosions = enemyShipType.@explosions + 1 # .....
-                  enemyShips[enemyPos] = {0.0, 0.0, enemyShipType}
-                else
-                  # puts remaining
-                  enemyShips[enemyPos] = {remaining, 0.0, enemyShipType}
-                end
+                enemyShips[enemyPos] = {remaining, 0.0, enemyShipType}
               else
-                # boom!
                 enemyShips[enemyPos] = {0.0, 0.0, enemyShipType}
               end
             else
@@ -171,7 +154,13 @@ class FleetGroup
               enemyShips[enemyPos] = {enemyShip[0], enemyShip[1] - dm, enemyShipType}
             end
 
-            # puts enemyShips[enemyPos][0].to_s + " - " + enemyShips[enemyPos][1].to_s
+            # In Ogame, even a shot absorbed by shields can trigger the
+            # explosion roll if the hull has already fallen below 70%.
+            xp = enemyShips[enemyPos][0] / enemyShipType.@baseHull
+            if xp < 0.7 && rn.next_float < (1.0 - xp)
+              enemyShipType.explosions = enemyShipType.@explosions + 1
+              enemyShips[enemyPos] = {0.0, 0.0, enemyShipType}
+            end
           else
             tDf += dm
             running = false
@@ -179,7 +168,8 @@ class FleetGroup
         end
 
         eid = enemyShipType.@id
-        if unitType.@rapidfires[eid]? && unitType.@rapidfires[eid] > rn.next_float
+        rfChance = unitType.@rapidfires[eid]?
+        if rfChance && rfChance > rn.next_float
           tA += 1
           running = true
         else
@@ -187,7 +177,7 @@ class FleetGroup
         end
       end
     end
-    # group.ships = enemyShips
+
     @turnAttacks = tA
     @turnDefense = tDf
     @turnDamage = tDm

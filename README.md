@@ -1,13 +1,18 @@
 #Ogame Battle Simulator, written in Crystal lang
 
-````
+````crystal
 crystal run main.cr
 ````
 
+### Run with Docker
+```bash
+docker build -t ogame-sim .
+docker run --rm ogame-sim
+```
+
 Or just run the optimized executable instead.
 
-See
-https://github.com/dlaynes/ogsim-nodejs
+See https://github.com/dlaynes/ogsim-nodejs
 
 Edit data/attackers.json and data/defenders.json at will.
 Knowledge of internal Ogame Ships IDs required. (Check config/resources.json)
